@@ -36,10 +36,21 @@ Contract: `docs/api/contract.md`
 | `POST` | `/api/links` | Create a short link |
 | `GET` | `/:slug` | Redirect to long URL |
 | `GET` | `/api/links/:slug` | Get link info |
+| `GET` | `/api/links/:slug/analytics` | Get click analytics |
 | `DELETE` | `/api/links/:slug` | Delete a link |
 | `GET` | `/health` | Health check |
 
 ## Getting Started
+
+### Docker (recommended)
+
+```bash
+docker compose up --build
+```
+
+Starts app on port 3000, PostgreSQL, and Redis. Tables are auto-created via `infra/migrations/`.
+
+### Local development
 
 ```bash
 npm install
@@ -47,7 +58,7 @@ cp .env.example .env       # edit as needed
 npm run dev                # starts on port 3000
 ```
 
-Requires PostgreSQL and Redis running locally (see Docker section below).
+Requires PostgreSQL and Redis running locally.
 
 ## Commands
 
@@ -63,16 +74,20 @@ Requires PostgreSQL and Redis running locally (see Docker section below).
 
 ## Tests
 
-24 tests across 8 suites:
+27 tests across 10 suites:
 
-- `tests/utils/slug.test.ts` — slug generation + validation
-- `tests/services/sharding.test.ts` — consistent hash ring distribution
-- `tests/services/cache.test.ts` — Redis key format
-- `tests/services/rate-limiter.test.ts` — sliding window logic
-- `tests/services/url.service.test.ts` — business logic (mocked)
-- `tests/controllers/url.controller.test.ts` — HTTP handlers
-- `tests/middleware/rate-limiter.test.ts` — middleware factory
-- `tests/app.test.ts` — app health + routing
+| Suite | Tests |
+|---|---|
+| `tests/utils/slug.test.ts` | 8 |
+| `tests/services/sharding.test.ts` | 5 |
+| `tests/services/cache.test.ts` | 2 |
+| `tests/services/rate-limiter.test.ts` | 1 |
+| `tests/services/url.service.test.ts` | 1 |
+| `tests/services/analytics.test.ts` | 2 |
+| `tests/controllers/url.controller.test.ts` | 2 |
+| `tests/controllers/analytics.controller.test.ts` | 1 |
+| `tests/middleware/rate-limiter.test.ts` | 1 |
+| `tests/app.test.ts` | 4 |
 
 ## Directory Layout
 
@@ -84,16 +99,19 @@ ShardLink/
 │   ├── schemas/
 │   └── decisions/
 ├── src/
-│   ├── config/             # environment loader
-│   ├── controllers/        # route handlers
-│   ├── middleware/          # rate limiter middleware
-│   ├── routes/             # Express route definitions
-│   ├── services/           # cache, sharding, rate-limiter, url
-│   ├── types/              # shared TypeScript interfaces
-│   └── utils/              # slug generation
+│   ├── config/
+│   ├── controllers/        # url, analytics
+│   ├── middleware/
+│   ├── routes/
+│   ├── services/           # cache, sharding, rate-limiter, url, analytics
+│   ├── types/
+│   └── utils/
 ├── tests/
-├── infra/                  # deployment configs
-├── AGENTS.md               # instructions for AI coding agents
+├── infra/
+│   └── migrations/         # SQL migrations
+├── Dockerfile
+├── docker-compose.yml
+├── AGENTS.md
 └── README.md
 ```
 
@@ -103,4 +121,4 @@ See `docs/schemas/data-models.md` for PostgreSQL, Redis, and ClickHouse schemas.
 
 ## Status
 
-Design phase. Implementation scaffold complete.
+Implementation phase. Core redirect, creation, caching, rate limiting, sharding, and analytics complete.
