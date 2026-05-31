@@ -31,6 +31,7 @@ export class CacheService {
     try {
       await this.client.setex(key, ttl, value);
     } catch {
+      // silently fail — cache is non-critical
     }
   }
 
@@ -38,6 +39,7 @@ export class CacheService {
     try {
       await this.client.del(key);
     } catch {
+      // silently fail — cache is non-critical
     }
   }
 

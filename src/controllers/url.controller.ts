@@ -34,9 +34,10 @@ export class UrlController {
         created_at: url.created_at.toISOString(),
         expires_at: url.expires_at ? url.expires_at.toISOString() : null,
       });
-    } catch (err: any) {
-      if (err.statusCode === 409) {
-        res.status(409).json({ error: 'slug_conflict', message: err.message });
+    } catch (err: unknown) {
+      const typedErr = err as { statusCode?: number; message: string };
+      if (typedErr.statusCode === 409) {
+        res.status(409).json({ error: 'slug_conflict', message: typedErr.message });
         return;
       }
       console.error('create error:', err);

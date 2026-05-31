@@ -11,7 +11,9 @@
     "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -35,15 +37,23 @@
     "pg": "^8.21.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/helmet": "^0.0.48",
     "@types/ioredis": "^4.28.10",
+    "@types/jest": "^30.0.0",
     "@types/nanoid": "^3.0.0",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.2.0",
+    "eslint": "^9.39.4",
+    "jest": "^30.4.2",
     "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.0"
   }
 }
