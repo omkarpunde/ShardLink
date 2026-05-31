@@ -107,11 +107,21 @@ Returns:
 }
 ```
 
-## v1 Simplifications
+## v1 Implementation
 
-- Skip Flink initially — use a simple Kafka consumer in the app to batch‑write to ClickHouse
-- GeoIP resolution: MaxMind GeoLite2 (free)
-- Device parsing: `ua-parser-js` or similar
+The current implementation simplifies the pipeline:
+
+- **Storage:** PostgreSQL `clicks` table (per shard, co-located with `urls`) instead of ClickHouse
+- **Transport:** In-process batcher (100ms / 100 events) instead of Kafka
+- **Processing:** Direct batch INSERT with a transaction per shard batch
+- **Device parsing:** `ua-parser-js` at ingestion time
+- **GeoIP:** Not yet implemented — country defaults to `XX`
+
+Migrating to Kafka + ClickHouse later involves:
+
+1. Replacing `AnalyticsBatcher` with a Kafka producer
+2. Adding a Kafka consumer service that writes to ClickHouse
+3. Updating the analytics API query to hit ClickHouse instead of PostgreSQL
 
 ## Related
 

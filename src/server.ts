@@ -2,6 +2,7 @@ import { createApp } from './app';
 import { config } from './config';
 import { cache } from './services/cache';
 import { rateLimiter } from './services/rate-limiter';
+import { analytics } from './services/analytics.service';
 
 async function main(): Promise<void> {
   const app = createApp();
@@ -11,9 +12,19 @@ async function main(): Promise<void> {
     rateLimiter.connect().catch(() => console.warn('Redis unavailable for rate limiter')),
   ]);
 
-  app.listen(config.port, () => {
+  analytics.start();
+
+  const server = app.listen(config.port, () => {
     console.log(`ShardLink running on port ${config.port}`);
   });
+
+  const shutdown = async () => {
+    analytics.stop();
+    server.close();
+    process.exit(0);
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 
 main().catch(console.error);

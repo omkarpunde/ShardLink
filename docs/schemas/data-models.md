@@ -24,6 +24,36 @@ CREATE TABLE urls (
 );
 ```
 
+### `clicks`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | BIGSERIAL | | Auto-increment |
+| slug | VARCHAR(10) | NOT NULL, FK → urls(slug) | Short code |
+| clicked_at | TIMESTAMPTZ | DEFAULT NOW() | When the redirect happened |
+| ip | VARCHAR(64) | | Request IP |
+| user_agent | TEXT | | Raw User-Agent header |
+| referer | TEXT | | Referer domain or "direct" |
+| country | VARCHAR(2) | DEFAULT 'XX' | GeoIP country code (v1: always XX) |
+| device | VARCHAR(20) | DEFAULT 'desktop' | mobile / tablet / desktop |
+
+```sql
+CREATE TABLE clicks (
+    id BIGSERIAL,
+    slug VARCHAR(10) NOT NULL REFERENCES urls(slug),
+    clicked_at TIMESTAMPTZ DEFAULT NOW(),
+    ip VARCHAR(64),
+    user_agent TEXT,
+    referer TEXT,
+    country VARCHAR(2) DEFAULT 'XX',
+    device VARCHAR(20) DEFAULT 'desktop'
+);
+
+CREATE INDEX idx_clicks_slug ON clicks(slug);
+CREATE INDEX idx_clicks_clicked_at ON clicks(clicked_at);
+CREATE INDEX idx_clicks_slug_clicked_at ON clicks(slug, clicked_at);
+```
+
 ## Redis (Cache)
 
 ### Redirect cache (L2)

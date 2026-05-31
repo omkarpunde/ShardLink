@@ -1,6 +1,15 @@
 import request from 'supertest';
 import { createApp } from '../../src/app';
 
+jest.mock('../../src/services/analytics.service', () => ({
+  analytics: {
+    start: jest.fn(),
+    stop: jest.fn(),
+    trackRedirect: jest.fn(),
+    getAnalytics: jest.fn(),
+  },
+}));
+
 jest.mock('../../src/services/cache', () => ({
   cache: {
     buildRedirectKey: jest.fn((s: string) => `shardlink:redirect:${s}`),

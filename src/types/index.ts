@@ -21,6 +21,22 @@ export interface CreateUrlResponse {
   expires_at: string;
 }
 
+export interface ClickEvent {
+  slug: string;
+  timestamp: Date;
+  ip: string;
+  user_agent: string;
+  referer: string;
+  country: string;
+  device: string;
+}
+
+export interface AnalyticsQuery {
+  from?: string;
+  to?: string;
+  granularity?: 'hour' | 'day';
+}
+
 export interface AnalyticsResponse {
   slug: string;
   period: { from: string; to: string };

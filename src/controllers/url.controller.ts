@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { urlService } from '../services/url.service';
+import { analytics } from '../services/analytics.service';
 import { config } from '../config';
 import { CreateUrlRequest } from '../types';
 
@@ -54,6 +55,12 @@ export class UrlController {
         res.status(404).json({ error: 'not_found', message: 'Link not found or expired' });
         return;
       }
+
+      const userAgent = typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : '';
+      const referer = typeof req.headers['referer'] === 'string' ? req.headers['referer']
+        : typeof req.headers['referrer'] === 'string' ? req.headers['referrer'] : '';
+
+      analytics.trackRedirect(slug, req.ip || req.socket.remoteAddress || '0.0.0.0', userAgent, referer);
 
       res.redirect(308, url.long_url);
     } catch (err) {
